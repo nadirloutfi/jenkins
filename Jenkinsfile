@@ -20,7 +20,9 @@ pipeline {
             steps {
                 script {
                     // Assume the Docker Hub registry by passing an empty string as the first parameter
-                    // fix
+                    // docker.withRegistry('' , 'dockerhub') {
+                    //     dockerImage.push()
+                    // }
                 }
             }
         }
