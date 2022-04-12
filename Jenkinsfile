@@ -1,20 +1,30 @@
 pipeline {
-    environment {
-        registry = "docker_hub_account/repository_name"
-        registryCredential = 'dockerhub'
+    agent any
+    tools {
+        maven "MAVEN"
+        jdk "JDK"
     }
-
-    agent {
-        label 'docker'
-    }
-
     stages {
-        stage('Building our image') {
+        stage('Initialize'){
+            steps{
+                echo "PATH = ${M2_HOME}/bin:${PATH}"
+                echo "M2_HOME = /opt/maven"
+            }
+        }
+        stage('Build') {
             steps {
-                script {
-                    dockerImage = docker.build "mcasperson/petclinic:$BUILD_NUMBER"
+                dir("/var/lib/jenkins/workspace/demopipelinetask/my-app") {
+                sh 'mvn -B -DskipTests clean package'
                 }
             }
         }
-    }
+     }
+    post {
+       always {
+          junit(
+        allowEmptyResults: true,
+        testResults: '*/test-reports/.xml'
+      )
+      }
+   } 
 }
